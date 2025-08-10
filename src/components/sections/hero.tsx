@@ -19,9 +19,9 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/50" />
       </div>
       <div className="container mx-auto px-4 z-10 relative">
-        <div className="grid md:grid-cols-2 items-center gap-12 min-h-[80vh] py-16">
-          <div className="relative flex justify-center items-center order-first">
-            <div className="relative w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden shadow-2xl border-4 border-primary/20">
+        <div className="grid md:grid-cols-2 items-center gap-8 md:gap-12 min-h-[80vh] py-12 md:py-16">
+          <div className="relative flex justify-center items-center order-last md:order-first">
+            <div className="relative w-60 h-60 md:w-96 md:h-96 rounded-full overflow-hidden shadow-2xl border-4 border-primary/20">
               <Image
                 src={imageUrls.heroPortrait}
                 alt="Portrait of Aayush Bhatta"
@@ -32,25 +32,25 @@ export function Hero() {
               />
             </div>
           </div>
-          <div className="text-center md:text-left order-last">
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
+          <div className="text-center md:text-left">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight">
               Aayush Bhatta
             </h1>
-            <p className="mt-4 text-xl md:text-2xl text-primary font-semibold">
+            <p className="mt-4 text-lg sm:text-xl md:text-2xl text-primary font-semibold">
               Civil Engineer | Innovator | Sustainability Advocate
             </p>
-            <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
+            <p className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed">
               Passionate about creating resilient infrastructure and leveraging technology to build a sustainable future.
             </p>
-            <div className="mt-8 flex justify-center md:justify-start gap-4">
+            <div className="mt-8 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
               <a href="#contact">
-                <Button size="lg">
+                <Button size="lg" className="w-full sm:w-auto">
                   <Send className="mr-2 h-5 w-5" />
                   Contact Me
                 </Button>
               </a>
               <a href="/aayush-bhatta-resume.pdf" download>
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto">
                   <Download className="mr-2 h-5 w-5" />
                   Download Resume
                 </Button>
