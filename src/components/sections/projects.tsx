@@ -13,6 +13,8 @@ interface ProjectsProps {
 }
 
 export function Projects({ projects, showViewAll = false }: ProjectsProps) {
+    const displayProjects = showViewAll ? projects.slice(0, 3) : projects;
+
   return (
     <section id="projects" className="">
       <div className="container mx-auto px-4">
@@ -21,7 +23,7 @@ export function Projects({ projects, showViewAll = false }: ProjectsProps) {
           <p className="text-lg text-muted-foreground mt-2">A selection of my academic and professional work.</p>
         </div>
         <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-          {projects.map((project) => (
+          {displayProjects.map((project) => (
             <Card key={project.slug} className="flex flex-col">
               <CardHeader>
                 <div className="relative aspect-video mb-4 rounded-lg overflow-hidden">

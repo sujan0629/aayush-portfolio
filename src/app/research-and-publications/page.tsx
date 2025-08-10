@@ -3,12 +3,11 @@
 import * as React from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { ResearchActivities } from '@/components/sections/research-activities';
 import { Research as ResearchSection } from '@/components/sections/research';
 import { Research } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
-export default function ResearchActivitiesPage() {
+export default function ResearchAndPublicationsPage() {
   const [publications, setPublications] = React.useState<Research[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const { toast } = useToast();
@@ -39,8 +38,7 @@ export default function ResearchActivitiesPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="flex-1 py-16 space-y-16">
-        <ResearchActivities />
+      <main className="flex-1 py-16">
         <ResearchSection publications={publications} isLoading={isLoading} />
       </main>
       <Footer />

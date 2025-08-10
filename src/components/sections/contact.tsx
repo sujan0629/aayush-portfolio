@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Github, Linkedin, Mail, Send, MapPin, Loader2 } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { useToast } from '@/hooks/use-toast';
+import { ContactInfo } from '@/lib/data';
+import { Skeleton } from '../ui/skeleton';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -23,6 +25,25 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function Contact() {
   const { toast } = useToast();
+  const [contactInfo, setContactInfo] = React.useState<ContactInfo | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function fetchContactInfo() {
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/contact-info');
+        const data = await response.json();
+        setContactInfo(data);
+      } catch (error) {
+        console.error("Failed to fetch contact info:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchContactInfo();
+  }, []);
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: '', email: '', subject: '', message: '' },
@@ -69,7 +90,7 @@ export function Contact() {
                 <div>
                   <CardTitle className="text-lg font-semibold">Location</CardTitle>
                   <CardDescription>
-                      New Baneshwor, Kathmandu, Nepal
+                      {isLoading ? <Skeleton className="h-4 w-48 mt-1" /> : (contactInfo?.location || 'Not specified')}
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -80,9 +101,11 @@ export function Contact() {
                 <div>
                   <CardTitle className="text-lg font-semibold">Email</CardTitle>
                   <CardDescription>
-                    <a href="mailto:aayushbhatta05@gmail.com" className="hover:underline">
-                      aayushbhatta05@gmail.com
-                    </a>
+                     {isLoading ? <Skeleton className="h-4 w-48 mt-1" /> : (
+                         <a href={`mailto:${contactInfo?.email}`} className="hover:underline">
+                            {contactInfo?.email || 'Not specified'}
+                        </a>
+                     )}
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -93,9 +116,11 @@ export function Contact() {
                 <div>
                   <CardTitle className="text-lg font-semibold">LinkedIn</CardTitle>
                   <CardDescription>
-                    <a href="#" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                      linkedin.com/in/aayush-bhatta
-                    </a>
+                     {isLoading ? <Skeleton className="h-4 w-48 mt-1" /> : (
+                        <a href={contactInfo?.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                            {contactInfo?.linkedin || 'Not specified'}
+                        </a>
+                     )}
                   </CardDescription>
                 </div>
               </CardHeader>

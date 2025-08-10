@@ -5,6 +5,7 @@ import {
   ChevronDown,
   Menu,
   Mountain,
+    Gift,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,12 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from '@/components/theme-toggle';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { GalleryImage } from '@/lib/data';
+import Image from 'next/image';
+import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '../ui/skeleton';
+
 
 const primaryLinks = [
   { href: '/', label: 'Home' },
@@ -25,7 +32,7 @@ const primaryLinks = [
   { href: '/blog', label: 'Blog' },
   { href: '/journal-articles', label: 'Journal Articles' },
   { href: '/honors-and-awards', label: 'Honors & Awards' },
-  { href: '/research-activities', label: 'Research' },
+  { href: '/research-and-publications', label: 'Research' },
   { href: '/#contact', label: 'Contact' },
 ];
 
@@ -36,9 +43,89 @@ const secondaryLinks = [
   { href: '/camera-roll', label: 'Camera Roll' },
   { href: '/literature-corner', label: 'Literature Corner' },
   { href: '/media-coverage', label: 'Media Coverage' },
+    { href: '/research-activities', label: 'Research Activities' },
+
 ];
 
 const allLinks = [...primaryLinks.slice(0, 6), ...secondaryLinks, primaryLinks[6]];
+
+
+
+function SurpriseButton() {
+    const [open, setOpen] = React.useState(false);
+    const [image, setImage] = React.useState<GalleryImage | null>(null);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const { toast } = useToast();
+
+    const fetchRandomImage = async () => {
+        setIsLoading(true);
+        try {
+            const res = await fetch('/api/surprise-images');
+            if(!res.ok) throw new Error("Could not fetch images");
+            const images: GalleryImage[] = await res.json();
+            
+            if (images.length === 0) {
+                 toast({
+                    variant: 'default',
+                    title: 'No Surprises Yet!',
+                    description: 'The surprise image collection is empty.',
+                });
+                setImage(null);
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * images.length);
+            setImage(images[randomIndex]);
+
+        } catch (error) {
+             toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Failed to fetch a surprise image.',
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const handleOpenChange = (isOpen: boolean) => {
+        setOpen(isOpen);
+        if (isOpen) {
+            fetchRandomImage();
+        }
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={handleOpenChange}>
+            <DialogTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <Gift className="h-5 w-5" />
+                    <span className="sr-only">Surprise!</span>
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-6xl">
+                <DialogHeader>
+                    <DialogTitle>A Little Surprise!</DialogTitle>
+                    <DialogDescription>Here is a random image from my collection. Enjoy!</DialogDescription>
+                </DialogHeader>
+                <div className="flex items-center justify-center p-4 min-h-[600px]">
+                    {isLoading ? (
+                        <Skeleton className="w-full h-[600px]" />
+                    ) : image ? (
+                        <div className="relative aspect-video w-full rounded-lg overflow-hidden">
+                            <Image src={image.src} alt={image.alt} layout="fill" objectFit="cover" data-ai-hint={image.hint} />
+                             <div className="absolute inset-x-0 bottom-0 bg-black/50 p-2 text-center text-white">
+                                <p className="text-sm font-semibold">{image.caption}</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-muted-foreground">No image to display.</p>
+                    )}
+                </div>
+            </DialogContent>
+        </Dialog>
+    )
+}
 
 export function Header() {
   const [open, setOpen] = React.useState(false);
@@ -49,7 +136,7 @@ export function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold">
           <Mountain className="h-6 w-6 text-primary" />
-          <span>A.B</span>
+          <span>Aayush Bhatta</span>
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
           {primaryLinks.map((link) => (
@@ -79,6 +166,7 @@ export function Header() {
           </DropdownMenu>
         </nav>
         <div className="flex items-center gap-2">
+                <SurpriseButton />
           <ThemeToggle />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild className="md:hidden">
@@ -95,7 +183,7 @@ export function Header() {
                   onClick={() => setOpen(false)}
                 >
                   <Mountain className="h-6 w-6 text-primary" />
-                  <span>A.B</span>
+                  <span>Aayush Bhatta</span>
                 </Link>
                 <nav className="flex flex-col gap-4">
                   {allLinks.map((link) => (

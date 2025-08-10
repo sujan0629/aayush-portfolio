@@ -21,6 +21,7 @@ const formSchema = z.object({
   status: z.enum(['Published', 'Under Review', 'In Progress']),
   journal: z.string().min(1, 'Journal is required'),
   abstract: z.string().min(1, 'Abstract is required'),
+  link: z.string().url().optional().or(z.literal('')),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -47,6 +48,7 @@ export default function NewResearchPage() {
       status: 'In Progress',
       journal: 'N/A',
       abstract: '',
+      link: '',
     },
   });
 
@@ -100,6 +102,9 @@ export default function NewResearchPage() {
                     )} />
                     <FormField control={form.control} name="journal" render={({ field }) => (
                         <FormItem><FormLabel>Journal/Conference</FormLabel><FormControl><Input placeholder="e.g., Journal of Materials" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                     <FormField control={form.control} name="link" render={({ field }) => (
+                        <FormItem><FormLabel>Publication Link</FormLabel><FormControl><Input placeholder="https://example.com/publication" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="status" render={({ field }) => (
                         <FormItem>

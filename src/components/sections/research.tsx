@@ -5,6 +5,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Badge } from '@/components/ui/badge';
 import { Research as ResearchType } from '@/lib/data';
 import { Skeleton } from '../ui/skeleton';
+import { Button } from '../ui/button';
+import { ArrowRight } from 'lucide-react';
 
 interface ResearchProps {
     publications: ResearchType[];
@@ -42,6 +44,13 @@ export function Research({ publications, isLoading }: ResearchProps) {
                   <AccordionContent>
                     <p className="font-semibold text-muted-foreground mb-2">{pub.journal}</p>
                     <p className="leading-relaxed">{pub.abstract}</p>
+                    {pub.link && (
+                        <Button asChild variant="link" className="p-0 h-auto mt-4">
+                            <a href={pub.link} target="_blank" rel="noopener noreferrer">
+                                View Publication <ArrowRight className="ml-2 h-4 w-4" />
+                            </a>
+                        </Button>
+                    )}
                   </AccordionContent>
                 </AccordionItem>
               ))}

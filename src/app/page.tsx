@@ -9,6 +9,7 @@ import { Blog } from '@/components/sections/blog';
 import { Research as ResearchSection } from '@/components/sections/research';
 import { Certifications } from '@/components/sections/certifications';
 import { QA } from '@/components/sections/qa';
+import { VisitorMap } from '@/components/sections/visitor-map';
 import { imageUrls } from '@/lib/images';
 import { Project, BlogPost, Research, TimelineEvent } from '@/lib/data';
 import dbConnect from '@/lib/db';
@@ -16,6 +17,7 @@ import ProjectModel from '@/models/Project';
 import BlogPostModel from '@/models/BlogPost';
 import ResearchModel from '@/models/Research';
 import TimelineEventModel from '@/models/TimelineEvent';
+export const dynamic = 'force-dynamic';
 
 async function getProjects(): Promise<Project[]> {
   await dbConnect();
@@ -124,6 +126,11 @@ export default async function Home() {
           </div>
         </div>
         <div className="relative bg-secondary py-16">
+          <div className="relative z-10">
+            <VisitorMap />
+          </div>
+        </div>
+        <div className="relative bg-background py-16">
            <div
             className="absolute inset-0 bg-cover bg-center opacity-10"
             style={{ backgroundImage: `url('${imageUrls.contactBackground}')` }}

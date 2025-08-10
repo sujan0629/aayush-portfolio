@@ -132,6 +132,7 @@ export interface Research {
     status: 'Published' | 'Under Review' | 'In Progress';
     journal: string;
     abstract: string;
+    link?: string;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -183,4 +184,16 @@ export interface Resume {
   originalFilename: string;
   published: boolean;
   uploadedAt: string;
+}
+
+export interface Visitor {
+    country: string;
+    count: number;
+}
+
+export interface ContactInfo {
+  _id: string;
+  location: string;
+  email: string;
+  linkedin: string;
 }

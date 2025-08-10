@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { FileText, Newspaper, BookOpen, Camera, PenSquare, Tv, Award, Microscope, Clock, User, FileBadge, Upload } from 'lucide-react';
+import { FileText, Newspaper, BookOpen, Camera, PenSquare, Tv, Award, Microscope, Clock, User, FileBadge, Upload, Mail, Gift } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -80,6 +80,7 @@ export default function AdminDashboardPage() {
                 </Button>
               </CardContent>
             </Card>
+           
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><FileText /> Manage Projects</CardTitle>
@@ -185,6 +186,29 @@ export default function AdminDashboardPage() {
                 </Button>
               </CardContent>
             </Card>
+                <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Gift /> Manage Surprise Images</CardTitle>
+                <CardDescription>Images for the surprise button.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild>
+                  <Link href="/admin/surprise-images">Go to Surprise Management</Link>
+                </Button>
+              </CardContent>
+            </Card>
+              <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Mail /> Manage Contact Info</CardTitle>
+                <CardDescription>Update your contact details.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild>
+                  <Link href="/admin/contact">Go to Contact Management</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            
           </div>
         </div>
       </main>

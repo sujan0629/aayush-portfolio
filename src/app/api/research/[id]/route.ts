@@ -2,13 +2,15 @@ import dbConnect from '@/lib/db';
 import Research from '@/models/Research';
 import { NextResponse } from 'next/server';
 
+// GET
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params; // ✅ await params
   await dbConnect();
   try {
-    const item = await Research.findById(params.id);
+    const item = await Research.findById(id);
     if (!item) {
       return NextResponse.json({ message: 'Research item not found' }, { status: 404 });
     }
@@ -18,14 +20,16 @@ export async function GET(
   }
 }
 
+// PUT
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params; // ✅ await params
   await dbConnect();
   try {
     const body = await request.json();
-    const updatedItem = await Research.findByIdAndUpdate(params.id, body, {
+    const updatedItem = await Research.findByIdAndUpdate(id, body, {
       new: true,
       runValidators: true,
     });
@@ -42,13 +46,15 @@ export async function PUT(
   }
 }
 
+// DELETE
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params; // ✅ await params
   await dbConnect();
   try {
-    const deletedItem = await Research.findByIdAndDelete(params.id);
+    const deletedItem = await Research.findByIdAndDelete(id);
     if (!deletedItem) {
       return NextResponse.json({ message: 'Research item not found' }, { status: 404 });
     }
