@@ -31,21 +31,30 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    // IMPORTANT: This is a mock authentication.
-    // Replace with a real authentication system (e.g., Firebase Auth, NextAuth.js).
-    if (data.username === 'admin' && data.password === 'password') {
-      localStorage.setItem('auth_token', 'your_mock_auth_token');
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid credentials');
+      }
+
+      const { token } = await response.json();
+      localStorage.setItem('auth_token', token);
       toast({
         title: 'Login Successful',
         description: 'Welcome back!',
       });
       router.push('/admin');
-    } else {
+    } catch (error) {
       toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: 'Invalid username or password.',
+        description: (error as Error).message || 'Invalid username or password.',
       });
     }
   };

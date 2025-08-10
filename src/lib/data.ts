@@ -1,6 +1,7 @@
 import { imageUrls } from './images';
 
 export interface Project {
+  _id: string;
   slug: string;
   title: string;
   category: string;
@@ -16,7 +17,8 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  {
+    {
+    _id: '1',
     slug: 'ring-road-design-project',
     title: 'Detail Survey, Design and Cost Estimation for Ring Road Segment',
     category: 'Thesis/Final Year Project',
@@ -28,6 +30,7 @@ export const projects: Project[] = [
     links: { },
   },
   {
+    _id: '2',
     slug: 'prestressed-concrete-bridge-study',
     title: 'A Study of Prestressed Concrete Bridge at Doda Kaj Bhakunda',
     category: '2nd Year Project',
@@ -57,6 +60,7 @@ export const reports: Report[] = [
 ];
 
 export interface BlogPost {
+  _id: string;
   slug: string;
   title: string;
   description: string;
@@ -68,11 +72,12 @@ export interface BlogPost {
 }
 
 export const blogPosts: BlogPost[] = [
-  // User did not provide any blog posts, so this is empty.
+  // All blog posts will be fetched from the database.
 ];
 
 // New data structures
 export interface OtherPublication {
+  _id: string;
   id: number;
   title: string;
   publication: string;
@@ -82,6 +87,7 @@ export interface OtherPublication {
 }
 
 export interface Column {
+  _id: string;
   id: number;
   title: string;
   outlet: string;
@@ -91,6 +97,7 @@ export interface Column {
 }
 
 export interface GalleryImage {
+  _id: string;
   id: number;
   src: string;
   alt: string;
@@ -99,6 +106,7 @@ export interface GalleryImage {
 }
 
 export interface Literature {
+  _id: string;
   id: number;
   title: string;
   author: string;
@@ -108,6 +116,7 @@ export interface Literature {
 }
 
 export interface MediaCoverage {
+  _id: string;
   id: number;
   title: string;
   outlet: string;
@@ -115,25 +124,3 @@ export interface MediaCoverage {
   link: string;
   summary: string;
 }
-
-
-// Mock data for new sections
-export const otherPublications: OtherPublication[] = [
-    // User did not provide any other publications, so this is empty.
-];
-
-export const columns: Column[] = [
-    // User did not provide any columns, so this is empty.
-];
-
-export const galleryImages: GalleryImage[] = [
-  // User did not provide any gallery images, so this is empty.
-];
-
-export const literatures: Literature[] = [
-    // User did not provide any literature, so this is empty.
-];
-
-export const mediaCoverages: MediaCoverage[] = [
-    // User did not provide any media coverages, so this is empty.
-];
