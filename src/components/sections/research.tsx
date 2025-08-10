@@ -1,26 +1,17 @@
+'use client';
 import * as React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
+import { Research as ResearchType } from '@/lib/data';
+import { Skeleton } from '../ui/skeleton';
 
-const publications = [
-  {
-    title: 'Mechanical Properties of Steel Fiber-Reinforced Concrete with Recycled Concrete Waste as Fine Aggregate Replacement',
-    authors: 'Bhatta, A., Bhatta, N.',
-    status: 'Under Review',
-    journal: 'Journal of Materials in Civil Engineering',
-    abstract: 'This research investigates the mechanical properties of steel fiber-reinforced concrete where recycled concrete waste is used as a partial replacement for fine aggregate. The study aims to promote sustainable construction practices by utilizing waste materials while maintaining or enhancing the structural performance of concrete.',
-  },
-  {
-    title: 'A Review Paper on the Biological Self-Healing Concrete: A Sustainable Approach to Crack Mitigation and Durability Enhancement',
-    authors: 'A. Bhatta',
-    status: 'In Progress',
-    journal: 'N/A',
-    abstract: 'This review paper explores the concept of biological self-healing concrete, a novel technology that uses microorganisms to precipitate calcium carbonate and heal cracks. The paper discusses various techniques, their effectiveness, and the potential of this approach to significantly enhance the durability and sustainability of concrete structures.',
-  },
-];
+interface ResearchProps {
+    publications: ResearchType[];
+    isLoading: boolean;
+}
 
-export function Research() {
+export function Research({ publications, isLoading }: ResearchProps) {
   return (
     <section id="research" className="">
       <div className="container mx-auto px-4">
@@ -30,9 +21,15 @@ export function Research() {
         </div>
         <Card>
           <CardContent className="p-6">
+            {isLoading ? (
+                <div className="space-y-4">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+            ) : (
             <Accordion type="single" collapsible className="w-full">
-              {publications.map((pub, index) => (
-                <AccordionItem value={`item-${index}`} key={index}>
+              {publications.map((pub) => (
+                <AccordionItem value={pub._id} key={pub._id}>
                   <AccordionTrigger>
                     <div className="text-left">
                       <h3 className="text-lg font-semibold">{pub.title}</h3>
@@ -49,6 +46,7 @@ export function Research() {
                 </AccordionItem>
               ))}
             </Accordion>
+            )}
           </CardContent>
         </Card>
       </div>

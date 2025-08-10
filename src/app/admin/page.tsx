@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { FileText, Newspaper, BookOpen, Camera, PenSquare, Tv } from 'lucide-react';
+import { FileText, Newspaper, BookOpen, Camera, PenSquare, Tv, Award, Microscope, Clock } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -66,11 +66,14 @@ export default function AdminDashboardPage() {
              <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><BookOpen /> Manage Publications</CardTitle>
-                <CardDescription>Manage Other Publications and Columns.</CardDescription>
+                <CardDescription>Manage Other Publications, Journal Articles and Columns.</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
                  <Button asChild>
                   <Link href="/admin/other-publications">Other Publications</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/admin/journal-articles">Journal Articles</Link>
                 </Button>
                 <Button asChild>
                   <Link href="/admin/columns">Columns</Link>
@@ -107,6 +110,39 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <Button asChild>
                   <Link href="/admin/media-coverage">Go to Media Management</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Award /> Manage Honors &amp; Awards</CardTitle>
+                <CardDescription>Add or remove honors and awards.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild>
+                  <Link href="/admin/honors-awards">Go to Awards Management</Link>
+                </Button>
+              </CardContent>
+            </Card>
+             <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Microscope /> Manage Research</CardTitle>
+                <CardDescription>Update research publications.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild>
+                  <Link href="/admin/research">Go to Research Management</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Clock /> Manage Timeline</CardTitle>
+                <CardDescription>Update timeline events.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild>
+                  <Link href="/admin/timeline">Go to Timeline Management</Link>
                 </Button>
               </CardContent>
             </Card>

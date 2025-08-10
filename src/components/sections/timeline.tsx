@@ -1,47 +1,22 @@
+'use client';
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Briefcase, GraduationCap } from 'lucide-react';
+import { TimelineEvent } from '@/lib/data';
+import { Skeleton } from '../ui/skeleton';
 
-const timelineEvents = [
-  {
-    icon: <Briefcase />,
-    date: 'Jan 2025 - Present',
-    title: 'Civil Engineer',
-    description: 'Shivalaya Consulting Hub Pvt. Ltd. | My role involves designing and planning residential and commercial buildings, and carrying out structural analysis.',
-    side: 'right',
-  },
-  {
-    icon: <Briefcase />,
-    date: 'Jan 2024 - Dec 2024',
-    title: 'Civil Engineer',
-    description: 'Sunpal Engineering Consultancy Pvt. Ltd. | Performed construction activities, including surveying and site investigation. Conducted problem-solving, team-building, and public outreach to prevent and resolve construction issues.',
-    side: 'left',
-  },
-  {
-    icon: <GraduationCap />,
-    date: 'Sep 2018 - Aug 2023',
-    title: 'Bachelor of Engineering in Civil Engineering',
-    description: 'National Academy of Science and Technology, Dhangadhi, Kailali, Nepal (Pokhara University)',
-    side: 'right',
-  },
-  {
-    icon: <Briefcase />,
-    date: 'Apr 2023 - Sep 2023',
-    title: 'Engineering Internship',
-    description: 'Bhawani Design and Engineering Solution Pvt. Ltd. | Designed and estimated costs for residential buildings, ensuring budget adherence and efficiency. Supervised construction sites, overseeing daily operations and ensuring quality standards were met.',
-    side: 'left',
-  },
-   {
-    icon: <Briefcase />,
-    date: 'Aug 2022 - Oct 2022',
-    title: 'Engineering Internship',
-    description: 'New Modern Engineering Consultancy Pvt. Ltd. | Designed and estimated costs for residential buildings, ensuring budget adherence and efficiency. Supervised construction sites, overseeing daily operations and ensuring quality standards were met.',
-    side: 'right',
-  },
-];
+interface TimelineProps {
+    events: TimelineEvent[];
+    isLoading: boolean;
+}
+
+const iconMap = {
+    Briefcase: <Briefcase />,
+    GraduationCap: <GraduationCap />,
+}
 
 // Custom sort function for date ranges
-const sortEvents = (events: typeof timelineEvents) => {
+const sortEvents = (events: TimelineEvent[]) => {
   return events.sort((a, b) => {
     const aYear = parseInt(a.date.split(' ').pop() ?? '0');
     const bYear = parseInt(b.date.split(' ').pop() ?? '0');
@@ -52,8 +27,8 @@ const sortEvents = (events: typeof timelineEvents) => {
 };
 
 
-export function Timeline() {
-  const sortedEvents = sortEvents([...timelineEvents]);
+export function Timeline({ events, isLoading }: TimelineProps) {
+  const sortedEvents = sortEvents([...events]);
   return (
     <section id="timeline" className="">
       <div className="container mx-auto px-4">
@@ -65,12 +40,18 @@ export function Timeline() {
           {/* Vertical line */}
           <div className="absolute left-1/2 top-0 h-full w-0.5 bg-border -translate-x-1/2"></div>
           
+          {isLoading ? (
+            <div className="space-y-10">
+                <Skeleton className="h-24 w-full" />
+                <Skeleton className="h-24 w-full" />
+            </div>
+          ) : (
           <div className="space-y-10">
-            {sortedEvents.map((event, index) => (
-              <div key={index} className={`relative flex w-full ${event.side === 'left' ? 'justify-start' : 'justify-end'}`}>
+            {sortedEvents.map((event) => (
+              <div key={event._id} className={`relative flex w-full ${event.side === 'left' ? 'justify-start' : 'justify-end'}`}>
                  {/* Icon */}
                 <div className={`absolute left-1/2 top-1 -translate-x-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-primary text-primary-foreground z-10`}>
-                  {event.icon}
+                  {iconMap[event.icon]}
                 </div>
 
                 {/* Card */}
@@ -90,6 +71,7 @@ export function Timeline() {
               </div>
             ))}
           </div>
+          )}
         </div>
       </div>
     </section>

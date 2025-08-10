@@ -1,4 +1,3 @@
-
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Hero } from '@/components/sections/hero';
@@ -7,14 +6,16 @@ import { Timeline } from '@/components/sections/timeline';
 import { Projects } from '@/components/sections/projects';
 import { Contact } from '@/components/sections/contact';
 import { Blog } from '@/components/sections/blog';
-import { Research } from '@/components/sections/research';
+import { Research as ResearchSection } from '@/components/sections/research';
 import { Certifications } from '@/components/sections/certifications';
 import { QA } from '@/components/sections/qa';
 import { imageUrls } from '@/lib/images';
-import { Project, BlogPost } from '@/lib/data';
+import { Project, BlogPost, Research, TimelineEvent } from '@/lib/data';
 import dbConnect from '@/lib/db';
 import ProjectModel from '@/models/Project';
 import BlogPostModel from '@/models/BlogPost';
+import ResearchModel from '@/models/Research';
+import TimelineEventModel from '@/models/TimelineEvent';
 
 async function getProjects(): Promise<Project[]> {
   await dbConnect();
@@ -28,10 +29,24 @@ async function getBlogPosts(): Promise<BlogPost[]> {
     return JSON.parse(JSON.stringify(posts));
 }
 
+async function getResearch(): Promise<Research[]> {
+    await dbConnect();
+    const research = await ResearchModel.find({}).sort({ createdAt: -1 }).lean();
+    return JSON.parse(JSON.stringify(research));
+}
+
+async function getTimelineEvents(): Promise<TimelineEvent[]> {
+    await dbConnect();
+    const events = await TimelineEventModel.find({}).sort({ date: -1 }).lean();
+    return JSON.parse(JSON.stringify(events));
+}
+
 
 export default async function Home() {
   const projects = await getProjects();
   const blogPosts = await getBlogPosts();
+  const research = await getResearch();
+  const timelineEvents = await getTimelineEvents();
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -55,7 +70,7 @@ export default async function Home() {
             data-ai-hint="winding road"
           ></div>
           <div className="relative z-10">
-            <Timeline />
+            <Timeline events={timelineEvents} isLoading={false} />
           </div>
         </div>
         <div className="relative bg-background py-16">
@@ -75,7 +90,7 @@ export default async function Home() {
             data-ai-hint="flying book"
           ></div>
           <div className="relative z-10">
-            <Research />
+            <ResearchSection publications={research} isLoading={false} />
           </div>
         </div>
         <div className="relative bg-background py-16">

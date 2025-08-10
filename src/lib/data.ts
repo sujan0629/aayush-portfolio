@@ -77,7 +77,6 @@ export interface BlogPost {
 
 export interface OtherPublication {
   _id: string;
-  id?: number; // Maintained for key prop on frontend, but backend uses _id
   title: string;
   publication: string;
   date: string;
@@ -89,7 +88,6 @@ export interface OtherPublication {
 
 export interface Column {
   _id: string;
-  id?: number;
   title: string;
   outlet: string;
   date: string;
@@ -101,7 +99,6 @@ export interface Column {
 
 export interface GalleryImage {
   _id: string;
-  id?: number;
   src: string;
   alt: string;
   hint: string;
@@ -112,7 +109,6 @@ export interface GalleryImage {
 
 export interface Literature {
   _id: string;
-  id?: number;
   title: string;
   author: string;
   description: string;
@@ -124,7 +120,6 @@ export interface Literature {
 
 export interface MediaCoverage {
   _id: string;
-  id?: number;
   title: string;
   outlet: string;
   date: string;
@@ -132,4 +127,49 @@ export interface MediaCoverage {
   summary: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface JournalArticle {
+    _id: string;
+    title: string;
+    journal: string;
+    date: string;
+    link: string;
+    summary: string;
+    image: string;
+    hint: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface HonorAward {
+    _id: string;
+    icon: string;
+    title: string;
+    issuer: string;
+    year: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface Research {
+    _id: string;
+    title: string;
+    authors: string;
+    status: 'Published' | 'Under Review' | 'In Progress';
+    journal: string;
+    abstract: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface TimelineEvent {
+    _id: string;
+    icon: 'Briefcase' | 'GraduationCap';
+    date: string;
+    title: string;
+    description: string;
+    side: 'left' | 'right';
+    createdAt?: string;
+    updatedAt?: string;
 }
