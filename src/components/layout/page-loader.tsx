@@ -24,7 +24,7 @@ export function PageLoader() {
   return (
     <div
       className={cn(
-        'fixed bottom-4 left-4 z-[101] transition-all duration-300',
+        'fixed bottom-4 right-4 z-[101] transition-all duration-300',
         loading ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'
       )}
     >
