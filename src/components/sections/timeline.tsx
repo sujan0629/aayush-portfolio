@@ -17,7 +17,10 @@ const iconMap = {
 
 // Custom sort function for date ranges
 const sortEvents = (events: TimelineEvent[]) => {
-  return events.sort((a, b) => {
+  if (!events || !Array.isArray(events)) {
+    return [];
+  }
+  return [...events].sort((a, b) => {
     const aYear = parseInt(a.date.split(' ').pop() ?? '0');
     const bYear = parseInt(b.date.split(' ').pop() ?? '0');
     if(a.date.includes('Present')) return -1;
@@ -28,7 +31,7 @@ const sortEvents = (events: TimelineEvent[]) => {
 
 
 export function Timeline({ events, isLoading }: TimelineProps) {
-  const sortedEvents = sortEvents([...events]);
+  const sortedEvents = sortEvents(events);
   return (
     <section id="timeline" className="">
       <div className="container mx-auto px-4">
