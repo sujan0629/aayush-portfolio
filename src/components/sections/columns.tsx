@@ -21,7 +21,7 @@ export function Columns({ columns, isLoading }: ColumnsProps) {
             <p>Loading columns...</p>
         ) : columns.length > 0 ? (
             columns.map((column) => (
-              <Card key={column.id} className="w-full">
+              <Card key={column._id} className="w-full">
                 <CardHeader>
                     <div className="flex items-center gap-4">
                         <Newspaper className="h-8 w-8 text-primary" />

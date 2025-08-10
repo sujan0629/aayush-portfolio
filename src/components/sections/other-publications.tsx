@@ -21,7 +21,7 @@ export function OtherPublications({ publications, isLoading }: OtherPublications
             <p>Loading publications...</p>
         ) : publications.length > 0 ? (
             publications.map((pub) => (
-              <Card key={pub.id} className="w-full">
+              <Card key={pub._id} className="w-full">
                 <CardHeader>
                     <div className="flex items-center gap-4">
                         <BookOpen className="h-8 w-8 text-primary" />

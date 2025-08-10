@@ -21,7 +21,7 @@ export function MediaCoverage({ items, isLoading }: MediaCoverageProps) {
             <p>Loading media coverage...</p>
         ) : items.length > 0 ? (
             items.map((item) => (
-              <Card key={item.id} className="w-full">
+              <Card key={item._id} className="w-full">
                 <CardHeader>
                     <div className="flex items-center gap-4">
                         <Tv className="h-8 w-8 text-primary" />

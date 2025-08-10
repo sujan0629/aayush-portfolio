@@ -16,7 +16,7 @@ export function LiteratureCorner({ items }: LiteratureCornerProps) {
       </div>
        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {items.map(item => (
-            <Card key={item.id}>
+            <Card key={item._id}>
                 <CardHeader>
                     <div className="relative aspect-video rounded-lg overflow-hidden">
                         <Image
