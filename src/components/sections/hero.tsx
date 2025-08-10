@@ -1,10 +1,45 @@
+'use client';
+
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Download, Send } from 'lucide-react';
 import Image from 'next/image';
 import { imageUrls } from '@/lib/images';
+import { Resume } from '@/lib/data';
+import { format } from 'date-fns';
 
 export function Hero() {
+  const [resume, setResume] = React.useState<Resume | null>(null);
+
+  React.useEffect(() => {
+    fetch('/api/resume')
+      .then((res) => {
+        if (res.ok && res.headers.get('Content-Length') !== '0') {
+          return res.json();
+        }
+        return null;
+      })
+      .then((data) => {
+        if (data && data.published) {
+          setResume(data);
+        }
+      })
+      .catch(err => {
+        console.error("Failed to fetch or parse resume", err);
+        setResume(null);
+      });
+  }, []);
+
+  const getResumeDownloadUrl = () => {
+    if (!resume) return '#';
+    const date = format(new Date(resume.uploadedAt), 'yyyy-MM-dd');
+    const downloadFilename = `aayush-bhatta-${date}-resume.pdf`;
+    
+    // Cloudinary URL transformation to force download with a custom filename
+    const cloudinaryUrlParts = resume.cloudinaryUrl.split('/upload/');
+    return `${cloudinaryUrlParts[0]}/upload/fl_attachment:${downloadFilename}/${cloudinaryUrlParts[1]}`;
+  };
+
   return (
     <section id="home" className="relative w-full overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -49,12 +84,14 @@ export function Hero() {
                   Contact Me
                 </Button>
               </a>
-              <a href="/aayush-bhatta-resume.pdf" download>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                  <Download className="mr-2 h-5 w-5" />
-                  Download Resume
-                </Button>
-              </a>
+              {resume && (
+                <a href={getResumeDownloadUrl()} download>
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                    <Download className="mr-2 h-5 w-5" />
+                    Download Resume
+                  </Button>
+                </a>
+              )}
             </div>
           </div>
         </div>

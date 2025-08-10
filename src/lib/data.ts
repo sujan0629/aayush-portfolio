@@ -175,3 +175,12 @@ export interface Licensure {
   idNumber: string;
   description: string;
 }
+
+export interface Resume {
+  _id: string;
+  cloudinaryUrl: string;
+  cloudinaryPublicId: string;
+  originalFilename: string;
+  published: boolean;
+  uploadedAt: string;
+}

@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { FileText, Newspaper, BookOpen, Camera, PenSquare, Tv, Award, Microscope, Clock, User, FileBadge } from 'lucide-react';
+import { FileText, Newspaper, BookOpen, Camera, PenSquare, Tv, Award, Microscope, Clock, User, FileBadge, Upload } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -66,6 +66,17 @@ export default function AdminDashboardPage() {
                 </Button>
                 <Button asChild>
                   <Link href="/admin/certifications">Certifications</Link>
+                </Button>
+              </CardContent>
+            </Card>
+             <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Upload /> Manage Resume</CardTitle>
+                <CardDescription>Upload and manage your resume.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild>
+                  <Link href="/admin/resume">Go to Resume Management</Link>
                 </Button>
               </CardContent>
             </Card>
