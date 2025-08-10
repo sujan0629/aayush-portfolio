@@ -8,24 +8,26 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Github, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import dbConnect from '@/lib/db';
+import ProjectModel from '@/models/Project';
 
 async function getProject(slug: string): Promise<Project | null> {
-  const res = await fetch(`${process.env.API_BASE_URL}/api/projects/${slug}`, { cache: 'no-store' });
-  if (!res.ok) {
-    // If the project is not found, the API will return a 404, which will trigger this.
+  await dbConnect();
+  const project = await ProjectModel.findOne({ slug }).lean();
+  if (!project) {
     return null;
   }
-  return res.json();
+  return JSON.parse(JSON.stringify(project));
 }
 
-// This function is optional, but recommended for performance.
-// It pre-builds static pages for each project at build time.
+async function getAllProjects(): Promise<Project[]> {
+    await dbConnect();
+    const projects = await ProjectModel.find({}).lean();
+    return JSON.parse(JSON.stringify(projects));
+}
+
 export async function generateStaticParams() {
-  const res = await fetch(`${process.env.API_BASE_URL}/api/projects`, { cache: 'no-store' });
-  if (!res.ok) {
-     return [];
-  }
-  const projects: Project[] = await res.json();
+  const projects: Project[] = await getAllProjects();
 
   return projects.map((project) => ({
     slug: project.slug,

@@ -1,25 +1,30 @@
 import { notFound } from 'next/navigation';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { blogPosts, BlogPost } from '@/lib/data';
+import { BlogPost } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
+import dbConnect from '@/lib/db';
+import BlogPostModel from '@/models/BlogPost';
 
 async function getPost(slug: string): Promise<BlogPost | null> {
-  const res = await fetch(`${process.env.API_BASE_URL}/api/blog/${slug}`, { cache: 'no-store' });
-  if (!res.ok) {
+  await dbConnect();
+  const post = await BlogPostModel.findOne({ slug }).lean();
+  if (!post) {
     return null;
   }
-  return res.json();
+  return JSON.parse(JSON.stringify(post));
+}
+
+async function getAllPosts(): Promise<BlogPost[]> {
+    await dbConnect();
+    const posts = await BlogPostModel.find({}).lean();
+    return JSON.parse(JSON.stringify(posts));
 }
 
 export async function generateStaticParams() {
-    const res = await fetch(`${process.env.API_BASE_URL}/api/blog`, { cache: 'no-store' });
-    if (!res.ok) {
-        return [];
-    }
-    const posts: BlogPost[] = await res.json();
+    const posts: BlogPost[] = await getAllPosts();
 
     return posts.map((post) => ({
         slug: post.slug,

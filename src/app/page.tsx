@@ -12,23 +12,20 @@ import { Certifications } from '@/components/sections/certifications';
 import { QA } from '@/components/sections/qa';
 import { imageUrls } from '@/lib/images';
 import { Project, BlogPost } from '@/lib/data';
+import dbConnect from '@/lib/db';
+import ProjectModel from '@/models/Project';
+import BlogPostModel from '@/models/BlogPost';
 
 async function getProjects(): Promise<Project[]> {
-  const res = await fetch(`${process.env.API_BASE_URL}/api/projects`, { cache: 'no-store' });
-  if (!res.ok) {
-    console.error('Failed to fetch projects');
-    return [];
-  }
-  return res.json();
+  await dbConnect();
+  const projects = await ProjectModel.find({}).sort({ createdAt: -1 }).limit(3).lean();
+  return JSON.parse(JSON.stringify(projects));
 }
 
 async function getBlogPosts(): Promise<BlogPost[]> {
-    const res = await fetch(`${process.env.API_BASE_URL}/api/blog`, { cache: 'no-store' });
-    if (!res.ok) {
-        console.error('Failed to fetch blog posts');
-        return [];
-    }
-    return res.json();
+    await dbConnect();
+    const posts = await BlogPostModel.find({}).sort({ date: -1 }).limit(3).lean();
+    return JSON.parse(JSON.stringify(posts));
 }
 
 
@@ -68,7 +65,7 @@ export default async function Home() {
             data-ai-hint="urban scene"
           ></div>
           <div className="relative z-10">
-            <Projects projects={projects.slice(0, 3)} showViewAll />
+            <Projects projects={projects} showViewAll />
           </div>
         </div>
         <div className="relative bg-secondary py-16">
@@ -88,7 +85,7 @@ export default async function Home() {
             data-ai-hint="construction fields"
           ></div>
           <div className="relative z-10">
-            <Blog posts={blogPosts.slice(0, 3)} showViewAll />
+            <Blog posts={blogPosts} showViewAll />
           </div>
         </div>
         <div className="relative bg-secondary py-16">

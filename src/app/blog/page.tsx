@@ -1,18 +1,11 @@
+'use client';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Blog } from '@/components/sections/blog';
 import { BlogPost } from '@/lib/data';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-
-async function loadBlogPosts(): Promise<BlogPost[]> {
-  // In a real app, you would fetch this from your API
-  const res = await fetch(`${process.env.API_BASE_URL}/api/blog`, { cache: 'no-store' });
-  if (!res.ok) {
-    throw new Error('Failed to fetch blog posts');
-  }
-  return res.json();
-}
+import { useToast } from '@/hooks/use-toast';
 
 function BlogFallback() {
   return (
@@ -31,14 +24,40 @@ function BlogFallback() {
 }
 
 
-export default async function AllBlogPostsPage() {
-  const posts = await loadBlogPosts();
+export default function AllBlogPostsPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    async function loadBlogPosts() {
+      try {
+        setIsLoading(true);
+        const res = await fetch('/api/blog');
+        if (!res.ok) {
+          throw new Error('Failed to fetch blog posts');
+        }
+        const data = await res.json();
+        setPosts(data);
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Error fetching blog posts',
+          description: 'Could not load blog data. Please try again later.',
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadBlogPosts();
+  }, [toast]);
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
       <main className="flex-1 py-16">
         <Suspense fallback={<BlogFallback />}>
-          <Blog posts={posts} />
+          {isLoading ? <BlogFallback /> : <Blog posts={posts} />}
         </Suspense>
       </main>
       <Footer />
