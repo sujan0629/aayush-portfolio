@@ -11,53 +11,14 @@ export function PageLoader() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    setLoading(false);
+    // Show loader on path change
+    setLoading(true);
+    
+    // Hide loader after a short delay to allow the page to render
+    const timer = setTimeout(() => setLoading(false), 500); 
+
+    return () => clearTimeout(timer);
   }, [pathname, searchParams]);
-
-  useEffect(() => {
-    const originalPushState = history.pushState;
-    const originalReplaceState = history.replaceState;
-    
-    const handleStateChange = () => {
-        setLoading(true);
-    };
-
-    history.pushState = function (...args) {
-        handleStateChange();
-        originalPushState.apply(this, args);
-    };
-
-    history.replaceState = function (...args) {
-        handleStateChange();
-        originalReplaceState.apply(this, args);
-    };
-    
-    const handlePopState = () => {
-        handleStateChange();
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    
-    const links = document.querySelectorAll('a');
-    links.forEach(link => {
-        const url = link.getAttribute('href');
-        if (url && (url.startsWith('/') || url.startsWith(window.location.origin))) {
-            link.addEventListener('click', handleStateChange);
-        }
-    });
-
-    return () => {
-      history.pushState = originalPushState;
-      history.replaceState = originalReplaceState;
-      window.removeEventListener('popstate', handlePopState);
-      links.forEach(link => {
-        const url = link.getAttribute('href');
-        if (url && (url.startsWith('/') || url.startsWith(window.location.origin))) {
-            link.removeEventListener('click', handleStateChange);
-        }
-      });
-    };
-  }, [pathname]);
 
 
   return (
