@@ -5,7 +5,6 @@ import {
   ChevronDown,
   Menu,
   Mountain,
-  UserCog,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -40,39 +38,28 @@ const secondaryLinks = [
   { href: '/media-coverage', label: 'Media Coverage' },
 ];
 
-const allLinks = [...primaryLinks.slice(0,6), ...secondaryLinks, primaryLinks[6]];
-
+const allLinks = [...primaryLinks.slice(0, 6), ...secondaryLinks, primaryLinks[6]];
 
 export function Header() {
   const [open, setOpen] = React.useState(false);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const pathname = usePathname();
 
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('auth_token');
-      setIsLoggedIn(!!token);
-    }
-  }, [pathname]);
-
   return (
-    <header
-      className="sticky top-0 z-50 w-full border-b bg-background"
-    >
+    <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold">
           <Mountain className="h-6 w-6 text-primary" />
-          <span>Aayush Bhatta</span>
+          <span>A.B</span>
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
           {primaryLinks.map((link) => (
             <Button variant="link" asChild key={link.href}>
-                <Link
+              <Link
                 href={link.href}
                 className="text-sm font-semibold text-muted-foreground transition-colors hover:text-primary px-3"
-                >
+              >
                 {link.label}
-                </Link>
+              </Link>
             </Button>
           ))}
           <DropdownMenu>
@@ -88,17 +75,6 @@ export function Header() {
                   <Link href={link.href}>{link.label}</Link>
                 </DropdownMenuItem>
               ))}
-              {isLoggedIn && (
-                 <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin">
-                      <UserCog className="mr-2 h-4 w-4" />
-                      Admin Panel
-                    </Link>
-                  </DropdownMenuItem>
-                </>
-              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </nav>
@@ -119,7 +95,7 @@ export function Header() {
                   onClick={() => setOpen(false)}
                 >
                   <Mountain className="h-6 w-6 text-primary" />
-                  <span>Aayush Bhatta</span>
+                  <span>A.B</span>
                 </Link>
                 <nav className="flex flex-col gap-4">
                   {allLinks.map((link) => (
@@ -132,15 +108,6 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
-                  {isLoggedIn && (
-                    <Link
-                      href="/admin"
-                      onClick={() => setOpen(false)}
-                      className="text-lg font-medium text-muted-foreground transition-colors hover:text-primary"
-                    >
-                      Admin Panel
-                    </Link>
-                  )}
                 </nav>
               </div>
             </SheetContent>
