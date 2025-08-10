@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { FileText, Newspaper, BookOpen, Camera, PenSquare, Tv, Award, Microscope, Clock } from 'lucide-react';
+import { FileText, Newspaper, BookOpen, Camera, PenSquare, Tv, Award, Microscope, Clock, User, FileBadge } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -41,6 +41,34 @@ export default function AdminDashboardPage() {
             <Button onClick={handleLogout} variant="outline">Logout</Button>
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+             <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><User /> Manage About</CardTitle>
+                <CardDescription>Manage Biography and Education.</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-2">
+                 <Button asChild>
+                  <Link href="/admin/about/biography">Biography</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/admin/about/education">Education</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><FileBadge /> Manage Certifications</CardTitle>
+                <CardDescription>Manage Certifications and Licensure.</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-2">
+                 <Button asChild>
+                  <Link href="/admin/certifications/licensure">Licensure</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/admin/certifications">Certifications</Link>
+                </Button>
+              </CardContent>
+            </Card>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><FileText /> Manage Projects</CardTitle>

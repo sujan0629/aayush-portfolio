@@ -18,33 +18,6 @@ export interface Project {
   updatedAt?: string;
 }
 
-export const projects: Project[] = [
-    {
-    _id: '1',
-    slug: 'ring-road-design-project',
-    title: 'Detail Survey, Design and Cost Estimation for Ring Road Segment',
-    category: 'Thesis/Final Year Project',
-    description: 'This project involved a detailed survey, design, and cost estimation for a hill road segment connecting Buditola Bazar to the Nepal Television Tower in Godawari Municipality, Kailali District.',
-    longDescription: 'This project involved a detailed survey, design, and cost estimation for a hill road segment connecting Buditola Bazar to the Nepal Television Tower in Godawari Municipality, Kailali District. The proposed design focused on widening the road to accommodate two lanes of traffic, adding drainage systems, and improving road surfaces, specifically tailored to the challenges of hill terrain.',
-    image: imageUrls.projectDefault,
-    hint: 'hill road',
-    tags: ['Surveying', 'Road Design', 'Cost Estimation', 'AutoCAD', 'Smart-Road'],
-    links: { },
-  },
-  {
-    _id: '2',
-    slug: 'prestressed-concrete-bridge-study',
-    title: 'A Study of Prestressed Concrete Bridge at Doda Kaj Bhakunda',
-    category: '2nd Year Project',
-    description: 'This project focuses on studying the feasibility of a prestressed concrete bridge at Doda Kaj Bhakunda, Belauri, Kanchanpur, Nepal.',
-    longDescription: 'This project focuses on studying the feasibility of a prestressed concrete bridge at Doda Kaj Bhakunda, Belauri, Kanchanpur, Nepal. The study involves field observations and analysis of river morphology, rock types, bridge span, bridge components, erosion around abutments, concrete condition, exposed rebar, and basin hydrology.',
-    image: imageUrls.projectDefault,
-    hint: 'concrete bridge',
-    tags: ['Feasibility Study', 'Bridge Engineering', 'River Morphology', 'Hydrology'],
-    links: { },
-  },
-];
-
 export interface Report {
   slug: string;
   title: string;
@@ -172,4 +145,33 @@ export interface TimelineEvent {
     side: 'left' | 'right';
     createdAt?: string;
     updatedAt?: string;
+}
+
+export interface Education {
+  _id: string;
+  degree: string;
+  institution: string;
+  dateRange: string;
+  affiliation: string;
+}
+
+export interface Biography {
+  _id: string;
+  content: string;
+}
+
+export interface Certification {
+  _id: string;
+  icon: string;
+  title: string;
+  category: string;
+  date: string;
+}
+
+export interface Licensure {
+  _id: string;
+  title: string;
+  category: string;
+  idNumber: string;
+  description: string;
 }

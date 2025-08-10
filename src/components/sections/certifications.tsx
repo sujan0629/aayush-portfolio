@@ -1,60 +1,23 @@
+'use client';
 import * as React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BadgeCheck, FileText, Star } from 'lucide-react';
+import { Certification, Licensure } from '@/lib/data';
 
-const certifications = [
-  {
-    icon: <Star className="h-6 w-6" />,
-    title: 'Master MATLAB Through Guided Problem Solving',
-    category: 'Udemy Course Completion Certificate',
-    date: 'Nov 2024',
-  },
-  {
-    icon: <Star className="h-6 w-6" />,
-    title: 'Generative AI for Data Analytics',
-    category: 'Udemy Course Completion Certificate',
-    date: 'Nov 2024',
-  },
-  {
-    icon: <FileText className="h-6 w-6" />,
-    title: 'IELTS (International English Language Testing System)',
-    category: 'Overall Score: 7.5 (L:8.5, R:8, W:6, S:6.5)',
-    date: 'July 2024',
-  },
-  {
-    icon: <FileText className="h-6 w-6" />,
-    title: 'Workshop on Road Design & Estimation Using Smart Road',
-    category: 'Organized by NAST in collaboration with Smart C.A.D Academy',
-    date: 'Jun 2023',
-  },
-    {
-    icon: <FileText className="h-6 w-6" />,
-    title: 'Workshop on Research Methodology',
-    category: 'Jointly organized by Pokhara University and NAST',
-    date: 'Apr 2023',
-  },
-  {
-    icon: <FileText className="h-6 w-6" />,
-    title: 'Workshop on the Structural Analysis of Residential Buildings using ETABS',
-    category: 'Workshop',
-    date: 'Dec 2022',
-  },
-  {
-    icon: <FileText className="h-6 w-6" />,
-    title: 'Basic training on introduction to AutoCAD and Sap2000',
-    category: 'Organized by the National Academy of Science and Technology',
-    date: 'Nov 2022',
-  },
-];
-
-const licensure = {
-    title: 'Nepal Engineering Council (NEC) License',
-    category: 'Civil \'A\' Category',
-    id: 'Reg. No. 80671',
-    description: 'Licensed to practice as a professional Civil Engineer in Nepal.',
-  };
+const iconMap: { [key: string]: React.ReactNode } = {
+  Star: <Star className="h-6 w-6" />,
+  FileText: <FileText className="h-6 w-6" />,
+};
 
 export function Certifications() {
+  const [certifications, setCertifications] = React.useState<Certification[]>([]);
+  const [licensure, setLicensure] = React.useState<Licensure | null>(null);
+
+  React.useEffect(() => {
+    fetch('/api/certifications').then(res => res.json()).then(data => setCertifications(data));
+    fetch('/api/licensure').then(res => res.json()).then(data => setLicensure(data));
+  }, []);
+
   return (
     <section id="certifications" className="">
       <div className="container mx-auto px-4">
@@ -68,21 +31,23 @@ export function Certifications() {
                 <CardTitle>Licensure</CardTitle>
             </CardHeader>
           <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-                      <BadgeCheck className="h-6 w-6" />
+            {licensure ? (
+              <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <BadgeCheck className="h-6 w-6" />
+                      </div>
+                    </div>
+                    <div className="flex-grow">
+                      <h3 className="text-xl font-semibold">{licensure.title}</h3>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 my-1">
+                        <p className="font-medium text-primary">{licensure.category}</p>
+                        <p className="text-sm text-muted-foreground">{licensure.idNumber}</p>
+                      </div>
+                      <p className="text-muted-foreground mt-1">{licensure.description}</p>
                     </div>
                   </div>
-                  <div className="flex-grow">
-                    <h3 className="text-xl font-semibold">{licensure.title}</h3>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 my-1">
-                      <p className="font-medium text-primary">{licensure.category}</p>
-                      <p className="text-sm text-muted-foreground">{licensure.id}</p>
-                    </div>
-                    <p className="text-muted-foreground mt-1">{licensure.description}</p>
-                  </div>
-                </div>
+            ) : <p>Loading...</p>}
           </CardContent>
         </Card>
         <Card>
@@ -91,11 +56,11 @@ export function Certifications() {
             </CardHeader>
           <CardContent className="p-6">
             <ul className="space-y-6">
-              {certifications.map((cert, index) => (
-                <li key={index} className="flex gap-4">
+              {certifications.map((cert) => (
+                <li key={cert._id} className="flex gap-4">
                   <div className="flex-shrink-0">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        {cert.icon}
+                        {iconMap[cert.icon]}
                     </div>
                   </div>
                   <div className="flex-grow">

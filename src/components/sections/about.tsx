@@ -1,7 +1,10 @@
+'use client';
+
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { HardHat, Landmark, Recycle, GraduationCap, Code, Book, BrainCircuit } from 'lucide-react';
+import { Biography, Education } from '@/lib/data';
 
 const skills = [
   { name: 'AutoCAD', icon: <Code className="mr-2 h-4 w-4" /> },
@@ -26,6 +29,14 @@ const otherSkills = [
 ];
 
 export function About() {
+  const [biography, setBiography] = React.useState<Biography | null>(null);
+  const [education, setEducation] = React.useState<Education[]>([]);
+
+  React.useEffect(() => {
+    fetch('/api/biography').then(res => res.json()).then(data => setBiography(data));
+    fetch('/api/education').then(res => res.json()).then(data => setEducation(data));
+  }, []);
+
   return (
     <section id="about" className="container mx-auto px-4">
       <div className="text-center mb-12">
@@ -39,7 +50,7 @@ export function About() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground leading-relaxed">
-              I am Aayush Bhatta, a dedicated and passionate Civil Engineer with a strong foundation in structural analysis, sustainable infrastructure, and project management. My academic and professional journey has been driven by a curiosity to solve complex engineering challenges and contribute to building a more resilient and sustainable future. I thrive in collaborative environments and am always eager to learn and apply new technologies in the field of civil engineering.
+              {biography ? biography.content : 'Loading biography...'}
             </p>
           </CardContent>
         </Card>
@@ -48,15 +59,17 @@ export function About() {
             <CardTitle className="text-2xl font-semibold">Education</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-start gap-4">
-              <GraduationCap className="h-8 w-8 text-primary mt-1" />
-              <div>
-                <h3 className="font-bold">Bachelor of Engineering in Civil Engineering</h3>
-                <p className="text-muted-foreground">National Academy of Science and Technology, Dhangadhi, Kailali, Nepal</p>
-                <p className="text-sm text-muted-foreground">Sep 2018 - Aug 2023</p>
-                <p className="text-sm text-muted-foreground">(Affiliated with Pokhara University, Nepal)</p>
-              </div>
-            </div>
+            {education.map(edu => (
+                <div key={edu._id} className="flex items-start gap-4">
+                <GraduationCap className="h-8 w-8 text-primary mt-1" />
+                <div>
+                    <h3 className="font-bold">{edu.degree}</h3>
+                    <p className="text-muted-foreground">{edu.institution}</p>
+                    <p className="text-sm text-muted-foreground">{edu.dateRange}</p>
+                    <p className="text-sm text-muted-foreground">{edu.affiliation}</p>
+                </div>
+                </div>
+            ))}
           </CardContent>
         </Card>
         <Card>
