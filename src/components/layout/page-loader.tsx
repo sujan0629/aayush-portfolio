@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function PageLoader() {
   const [loading, setLoading] = useState(false);
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -40,7 +39,7 @@ export function PageLoader() {
       document.removeEventListener('click', handleLinkClick);
       setLoading(false);
     };
-  }, [pathname, searchParams]);
+  }, [pathname]);
 
   if (!isClient) {
     return null;
