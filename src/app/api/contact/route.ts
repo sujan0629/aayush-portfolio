@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { data, error } = await resend.emails.send({
-      from: 'Portfolio Contact Form <onboarding@resend.dev>',
+      from: 'Portfolio Contact Form <aayushbhattacontact@codelitsstudio.com>',
       to: [adminEmail],
       subject: `New Portfolio Message: ${subject}`,
       react: React.createElement(ContactFormEmail, {

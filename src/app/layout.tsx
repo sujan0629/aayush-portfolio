@@ -1,6 +1,7 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import { PageLoader } from '@/components/layout/page-loader';
 
 export const metadata: Metadata = {
   title: 'Aayush Bhatta Portfolio',
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         {children}
         <Toaster />
+        <PageLoader />
       </body>
     </html>
   );
