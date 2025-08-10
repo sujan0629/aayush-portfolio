@@ -9,28 +9,25 @@ export function PageLoader() {
   const [loading, setLoading] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This effect runs on the client after the component mounts.
-    // We'll use this effect to listen for link clicks and to hide the loader when navigation is complete.
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
     setLoading(false);
 
     const handleLinkClick = (e: MouseEvent) => {
       let target = e.target as HTMLElement;
-      // Traverse up the DOM tree to find the anchor tag
       while (target && target.tagName !== 'A') {
         target = target.parentElement as HTMLElement;
       }
 
-      if (
-        target &&
-        target.tagName === 'A' &&
-        target.hasAttribute('href')
-      ) {
+      if (target && target.tagName === 'A' && target.hasAttribute('href')) {
         const href = target.getAttribute('href');
         const currentPath = window.location.pathname + window.location.search;
 
-        // Check if it's an internal link, not a link to an external site, a hash link, or the current page.
         if (href && href.startsWith('/') && !href.startsWith('/#') && href !== currentPath) {
           setLoading(true);
         }
@@ -41,9 +38,13 @@ export function PageLoader() {
 
     return () => {
       document.removeEventListener('click', handleLinkClick);
+      setLoading(false);
     };
   }, [pathname, searchParams]);
 
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div
