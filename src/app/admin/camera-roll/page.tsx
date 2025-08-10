@@ -7,7 +7,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, Trash2, Pencil, ExternalLink } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { GalleryImage } from '@/lib/data';
 import Image from 'next/image';
@@ -30,34 +30,34 @@ export default function ManageCameraRollPage() {
   const [images, setImages] = React.useState<GalleryImage[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  const fetchImages = React.useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/camera-roll');
+      if (!response.ok) throw new Error('Failed to fetch images');
+      const data = await response.json();
+      setImages(data);
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Could not fetch images.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
   React.useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
       router.replace('/login');
       return;
     }
-
-    async function fetchImages() {
-      try {
-        const response = await fetch('/api/camera-roll');
-        if (!response.ok) throw new Error('Failed to fetch images');
-        const data = await response.json();
-        setImages(data);
-      } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Could not fetch images.',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     fetchImages();
-  }, [router, toast]);
+  }, [router, fetchImages]);
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       const response = await fetch(`/api/camera-roll/${id}`, {
         method: 'DELETE',
@@ -67,7 +67,7 @@ export default function ManageCameraRollPage() {
         throw new Error('Failed to delete image');
       }
 
-      setImages(images.filter((p) => p.id !== id));
+      setImages(prev => prev.filter((p) => p._id !== id));
       toast({
         title: 'Image Deleted',
         description: 'The image has been removed successfully.',
@@ -108,17 +108,17 @@ export default function ManageCameraRollPage() {
             </CardHeader>
             <CardContent>
               {images.length === 0 ? (
-                <p>No images found.</p>
+                <p>No images found. Add one to get started.</p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {images.map((image) => (
-                    <div key={image.id} className="border rounded-lg p-4">
+                    <div key={image._id} className="border rounded-lg p-4">
                         <Image src={image.src} alt={image.alt} width={300} height={200} className="rounded-md object-cover w-full aspect-video" />
                         <h3 className="font-semibold mt-2">{image.caption}</h3>
                         <p className="text-sm text-muted-foreground">{image.alt}</p>
                       <div className="flex items-center gap-2 mt-4">
                          <Button variant="outline" size="icon" asChild>
-                           <Link href={`/admin/camera-roll/edit/${image.id}`}>
+                           <Link href={`/admin/camera-roll/edit/${image._id}`}>
                             <Pencil className="h-4 w-4" />
                            </Link>
                          </Button>
@@ -137,7 +137,7 @@ export default function ManageCameraRollPage() {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDelete(image.id)}>
+                              <AlertDialogAction onClick={() => handleDelete(image._id)}>
                                 Continue
                               </AlertDialogAction>
                             </AlertDialogFooter>

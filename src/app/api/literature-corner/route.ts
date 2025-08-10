@@ -1,19 +1,29 @@
+import dbConnect from '@/lib/db';
+import Literature from '@/models/Literature';
 import { NextResponse } from 'next/server';
-import { literatures } from '@/lib/data';
 
-export async function GET(request: Request) {
-  return NextResponse.json(literatures);
+export async function GET() {
+  await dbConnect();
+  try {
+    const items = await Literature.find({}).sort({ createdAt: -1 });
+    return NextResponse.json(items);
+  } catch (error) {
+    return NextResponse.json({ message: 'Error fetching literature items', error }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
-  const newItem = await request.json();
-  
-  if (!newItem.title || !newItem.author) {
-      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
+  await dbConnect();
+  try {
+    const body = await request.json();
+    const newItem = new Literature(body);
+    await newItem.save();
+    return NextResponse.json(newItem, { status: 201 });
+  } catch (error) {
+    console.error('Error creating literature item:', error);
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json({ message: 'Validation Error', errors: (error as any).errors }, { status: 400 });
+    }
+    return NextResponse.json({ message: 'Error creating literature item', error }, { status: 500 });
   }
-  
-  newItem.id = literatures.length + 1;
-  console.log('Received new literature item:', newItem);
-  
-  return NextResponse.json(newItem, { status: 201 });
 }

@@ -30,32 +30,32 @@ export default function ManageProjectsPage() {
   const [projects, setProjects] = React.useState<Project[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  const fetchProjects = React.useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/projects');
+      if (!response.ok) throw new Error('Failed to fetch projects');
+      const data = await response.json();
+      setProjects(data);
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Could not fetch projects.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
   React.useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
       router.replace('/login');
       return;
     }
-
-    async function fetchProjects() {
-      try {
-        const response = await fetch('/api/projects');
-        if (!response.ok) throw new Error('Failed to fetch projects');
-        const data = await response.json();
-        setProjects(data);
-      } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Could not fetch projects.',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     fetchProjects();
-  }, [router, toast]);
+  }, [router, fetchProjects]);
 
   const handleDelete = async (slug: string) => {
     try {
@@ -67,7 +67,7 @@ export default function ManageProjectsPage() {
         throw new Error('Failed to delete project');
       }
 
-      setProjects(projects.filter((p) => p.slug !== slug));
+      setProjects(prev => prev.filter((p) => p.slug !== slug));
       toast({
         title: 'Project Deleted',
         description: 'The project has been removed successfully.',
@@ -80,7 +80,6 @@ export default function ManageProjectsPage() {
       });
     }
   };
-
 
   if (isLoading) {
     return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
@@ -108,7 +107,7 @@ export default function ManageProjectsPage() {
             </CardHeader>
             <CardContent>
               {projects.length === 0 ? (
-                <p>No projects found.</p>
+                <p>No projects found. Add one to get started.</p>
               ) : (
                 <div className="space-y-4">
                   {projects.map((project) => (

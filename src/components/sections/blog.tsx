@@ -5,14 +5,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { blogPosts, BlogPost } from '@/lib/data';
+import { BlogPost } from '@/lib/data';
 
 interface BlogProps {
-  posts?: BlogPost[];
+  posts: BlogPost[];
   showViewAll?: boolean;
 }
 
-export function Blog({ posts = blogPosts, showViewAll = false }: BlogProps) {
+export function Blog({ posts, showViewAll = false }: BlogProps) {
   const displayPosts = showViewAll ? posts.slice(0, 3) : posts;
 
   return (

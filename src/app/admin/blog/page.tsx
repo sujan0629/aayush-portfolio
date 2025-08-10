@@ -30,32 +30,33 @@ export default function ManageBlogPage() {
   const [posts, setPosts] = React.useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  const fetchPosts = React.useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/blog');
+      if (!response.ok) throw new Error('Failed to fetch posts');
+      const data = await response.json();
+      setPosts(data);
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Could not fetch blog posts.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
+
   React.useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
       router.replace('/login');
       return;
     }
-
-    async function fetchPosts() {
-      try {
-        const response = await fetch('/api/blog');
-        if (!response.ok) throw new Error('Failed to fetch posts');
-        const data = await response.json();
-        setPosts(data);
-      } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Could not fetch blog posts.',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     fetchPosts();
-  }, [router, toast]);
+  }, [router, fetchPosts]);
 
   const handleDelete = async (slug: string) => {
     try {
@@ -107,7 +108,7 @@ export default function ManageBlogPage() {
             </CardHeader>
             <CardContent>
               {posts.length === 0 ? (
-                 <p>No blog posts found.</p>
+                 <p>No blog posts found. Add one to get started.</p>
               ) : (
                 <div className="space-y-4">
                   {posts.map((post) => (

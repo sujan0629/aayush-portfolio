@@ -14,6 +14,8 @@ export interface Project {
     github?: string;
     report?: string; // slug of a report
   };
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export const projects: Project[] = [
@@ -69,58 +71,65 @@ export interface BlogPost {
   date: string;
   tags: string[];
   content: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export const blogPosts: BlogPost[] = [
-  // All blog posts will be fetched from the database.
-];
-
-// New data structures
 export interface OtherPublication {
   _id: string;
-  id: number;
+  id?: number; // Maintained for key prop on frontend, but backend uses _id
   title: string;
   publication: string;
   date: string;
   link: string;
   description: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Column {
   _id: string;
-  id: number;
+  id?: number;
   title: string;
   outlet: string;
   date: string;
   link: string;
   summary: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface GalleryImage {
   _id: string;
-  id: number;
+  id?: number;
   src: string;
   alt: string;
   hint: string;
   caption: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Literature {
   _id: string;
-  id: number;
+  id?: number;
   title: string;
   author: string;
   description: string;
   image: string;
   hint: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface MediaCoverage {
   _id: string;
-  id: number;
+  id?: number;
   title: string;
   outlet: string;
   date: string;
   link: string;
   summary: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

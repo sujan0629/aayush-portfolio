@@ -1,19 +1,29 @@
+import dbConnect from '@/lib/db';
+import BlogPost from '@/models/BlogPost';
 import { NextResponse } from 'next/server';
-import { blogPosts } from '@/lib/data'; // Using static data for now
 
-export async function GET(request: Request) {
-  return NextResponse.json(blogPosts);
+export async function GET() {
+  await dbConnect();
+  try {
+    const posts = await BlogPost.find({}).sort({ date: -1 });
+    return NextResponse.json(posts);
+  } catch (error) {
+    return NextResponse.json({ message: 'Error fetching blog posts', error }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
-  // NOTE: This is a mock implementation.
-  const newPost = await request.json();
-  
-  if (!newPost.title || !newPost.slug) {
-      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
+  await dbConnect();
+  try {
+    const body = await request.json();
+    const newPost = new BlogPost(body);
+    await newPost.save();
+    return NextResponse.json(newPost, { status: 201 });
+  } catch (error) {
+    console.error('Error creating blog post:', error);
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json({ message: 'Validation Error', errors: (error as any).errors }, { status: 400 });
+    }
+    return NextResponse.json({ message: 'Error creating blog post', error }, { status: 500 });
   }
-
-  console.log('Received new blog post:', newPost);
-  
-  return NextResponse.json(newPost, { status: 201 });
 }

@@ -30,34 +30,34 @@ export default function ManageLiteraturePage() {
   const [items, setItems] = React.useState<Literature[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  const fetchItems = React.useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/literature-corner');
+      if (!response.ok) throw new Error('Failed to fetch items');
+      const data = await response.json();
+      setItems(data);
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Could not fetch literature items.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
   React.useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
       router.replace('/login');
       return;
     }
-
-    async function fetchItems() {
-      try {
-        const response = await fetch('/api/literature-corner');
-        if (!response.ok) throw new Error('Failed to fetch items');
-        const data = await response.json();
-        setItems(data);
-      } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Could not fetch literature items.',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     fetchItems();
-  }, [router, toast]);
+  }, [router, fetchItems]);
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       const response = await fetch(`/api/literature-corner/${id}`, {
         method: 'DELETE',
@@ -67,7 +67,7 @@ export default function ManageLiteraturePage() {
         throw new Error('Failed to delete item');
       }
 
-      setItems(items.filter((p) => p.id !== id));
+      setItems(prev => prev.filter((p) => p._id !== id));
       toast({
         title: 'Item Deleted',
         description: 'The literature item has been removed successfully.',
@@ -108,17 +108,17 @@ export default function ManageLiteraturePage() {
             </CardHeader>
             <CardContent>
               {items.length === 0 ? (
-                <p>No literature items found.</p>
+                <p>No literature items found. Add one to get started.</p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {items.map((item) => (
-                     <div key={item.id} className="border rounded-lg p-4">
+                     <div key={item._id} className="border rounded-lg p-4">
                         <Image src={item.image} alt={item.title} width={300} height={200} className="rounded-md object-cover w-full aspect-video" />
                         <h3 className="font-semibold mt-2">{item.title}</h3>
                         <p className="text-sm text-muted-foreground">{item.author}</p>
                       <div className="flex items-center gap-2 mt-4">
                          <Button variant="outline" size="icon" asChild>
-                           <Link href={`/admin/literature-corner/edit/${item.id}`}>
+                           <Link href={`/admin/literature-corner/edit/${item._id}`}>
                             <Pencil className="h-4 w-4" />
                            </Link>
                          </Button>
@@ -137,7 +137,7 @@ export default function ManageLiteraturePage() {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDelete(item.id)}>
+                              <AlertDialogAction onClick={() => handleDelete(item._id)}>
                                 Continue
                               </AlertDialogAction>
                             </AlertDialogFooter>

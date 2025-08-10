@@ -1,19 +1,20 @@
+import dbConnect from '@/lib/db';
+import Project from '@/models/Project';
 import { NextResponse } from 'next/server';
-import { projects } from '@/lib/data'; // Using static data for now
-
-// In a real application, you would fetch this data from a database.
 
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
-  const slug = params.slug;
-  const project = projects.find((p) => p.slug === slug);
-
-  if (project) {
+  await dbConnect();
+  try {
+    const project = await Project.findOne({ slug: params.slug });
+    if (!project) {
+      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
+    }
     return NextResponse.json(project);
-  } else {
-    return NextResponse.json({ message: 'Project not found' }, { status: 404 });
+  } catch (error) {
+    return NextResponse.json({ message: 'Error fetching project', error }, { status: 500 });
   }
 }
 
@@ -21,47 +22,38 @@ export async function PUT(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
-    // NOTE: This is a mock implementation.
-    // The user is expected to replace this with their actual database logic.
-    const slug = params.slug;
-    const updatedProjectData = await request.json();
-
-    // Find the project to update. In a real app, this would be a database query.
-    const projectIndex = projects.findIndex((p) => p.slug === slug);
-
-    if (projectIndex === -1) {
-        return NextResponse.json({ message: 'Project not found' }, { status: 404 });
+  await dbConnect();
+  try {
+    const body = await request.json();
+    const updatedProject = await Project.findOneAndUpdate({ slug: params.slug }, body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!updatedProject) {
+      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
     }
-
-    // In a real app, you would update the record in the database.
-    console.log(`Updating project ${slug} with:`, updatedProjectData);
-    
-    // We can't actually update the in-memory 'projects' array, so we'll just
-    // pretend it was successful and return the merged data.
-    const updatedProject = { ...projects[projectIndex], ...updatedProjectData };
-
     return NextResponse.json(updatedProject);
+  } catch (error) {
+    console.error('Error updating project:', error);
+     if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json({ message: 'Validation Error', errors: (error as any).errors }, { status: 400 });
+    }
+    return NextResponse.json({ message: 'Error updating project', error }, { status: 500 });
+  }
 }
 
 export async function DELETE(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
-    // NOTE: This is a mock implementation.
-    // The user is expected to replace this with their actual database logic.
-    const slug = params.slug;
-
-    // Find the project to delete. In a real app, this would be a database query.
-    const projectIndex = projects.findIndex((p) => p.slug === slug);
-
-    if (projectIndex === -1) {
-        return NextResponse.json({ message: 'Project not found' }, { status: 404 });
+  await dbConnect();
+  try {
+    const deletedProject = await Project.findOneAndDelete({ slug: params.slug });
+    if (!deletedProject) {
+      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
     }
-
-    // In a real app, you would delete the record from the database.
-    console.log(`Deleting project ${slug}`);
-
-    // We can't actually delete from the in-memory 'projects' array.
-    // We'll just return a success message.
     return NextResponse.json({ message: 'Project deleted successfully' });
+  } catch (error) {
+    return NextResponse.json({ message: 'Error deleting project', error }, { status: 500 });
+  }
 }

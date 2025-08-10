@@ -1,17 +1,20 @@
+import dbConnect from '@/lib/db';
+import BlogPost from '@/models/BlogPost';
 import { NextResponse } from 'next/server';
-import { blogPosts } from '@/lib/data'; // Using static data for now
 
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
-  const slug = params.slug;
-  const post = blogPosts.find((p) => p.slug === slug);
-
-  if (post) {
+  await dbConnect();
+  try {
+    const post = await BlogPost.findOne({ slug: params.slug });
+    if (!post) {
+      return NextResponse.json({ message: 'Post not found' }, { status: 404 });
+    }
     return NextResponse.json(post);
-  } else {
-    return NextResponse.json({ message: 'Post not found' }, { status: 404 });
+  } catch (error) {
+    return NextResponse.json({ message: 'Error fetching post', error }, { status: 500 });
   }
 }
 
@@ -19,34 +22,38 @@ export async function PUT(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
-    const slug = params.slug;
-    const updatedPostData = await request.json();
-
-    const postIndex = blogPosts.findIndex((p) => p.slug === slug);
-
-    if (postIndex === -1) {
-        return NextResponse.json({ message: 'Post not found' }, { status: 404 });
+  await dbConnect();
+  try {
+    const body = await request.json();
+    const updatedPost = await BlogPost.findOneAndUpdate({ slug: params.slug }, body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!updatedPost) {
+      return NextResponse.json({ message: 'Post not found' }, { status: 404 });
     }
-    
-    console.log(`Updating blog post ${slug} with:`, updatedPostData);
-    
-    const updatedPost = { ...blogPosts[postIndex], ...updatedPostData };
-
     return NextResponse.json(updatedPost);
+  } catch (error) {
+    console.error('Error updating post:', error);
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json({ message: 'Validation Error', errors: (error as any).errors }, { status: 400 });
+    }
+    return NextResponse.json({ message: 'Error updating post', error }, { status: 500 });
+  }
 }
 
 export async function DELETE(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
-    const slug = params.slug;
-    const postIndex = blogPosts.findIndex((p) => p.slug === slug);
-
-    if (postIndex === -1) {
-        return NextResponse.json({ message: 'Post not found' }, { status: 404 });
+  await dbConnect();
+  try {
+    const deletedPost = await BlogPost.findOneAndDelete({ slug: params.slug });
+    if (!deletedPost) {
+      return NextResponse.json({ message: 'Post not found' }, { status: 404 });
     }
-
-    console.log(`Deleting blog post ${slug}`);
-
-    return NextResponse.json({ message: 'Blog post deleted successfully' });
+    return NextResponse.json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    return NextResponse.json({ message: 'Error deleting post', error }, { status: 500 });
+  }
 }

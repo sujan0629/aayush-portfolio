@@ -1,19 +1,29 @@
+import dbConnect from '@/lib/db';
+import Column from '@/models/Column';
 import { NextResponse } from 'next/server';
-import { columns } from '@/lib/data';
 
-export async function GET(request: Request) {
-  return NextResponse.json(columns);
+export async function GET() {
+  await dbConnect();
+  try {
+    const items = await Column.find({}).sort({ date: -1 });
+    return NextResponse.json(items);
+  } catch (error) {
+    return NextResponse.json({ message: 'Error fetching columns', error }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
-  const newColumn = await request.json();
-  
-  if (!newColumn.title || !newColumn.outlet) {
-      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
+  await dbConnect();
+  try {
+    const body = await request.json();
+    const newItem = new Column(body);
+    await newItem.save();
+    return NextResponse.json(newItem, { status: 201 });
+  } catch (error) {
+    console.error('Error creating column:', error);
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json({ message: 'Validation Error', errors: (error as any).errors }, { status: 400 });
+    }
+    return NextResponse.json({ message: 'Error creating column', error }, { status: 500 });
   }
-  
-  newColumn.id = columns.length + 1;
-  console.log('Received new column:', newColumn);
-  
-  return NextResponse.json(newColumn, { status: 201 });
 }

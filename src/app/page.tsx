@@ -1,3 +1,4 @@
+
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Hero } from '@/components/sections/hero';
@@ -5,15 +6,36 @@ import { About } from '@/components/sections/about';
 import { Timeline } from '@/components/sections/timeline';
 import { Projects } from '@/components/sections/projects';
 import { Contact } from '@/components/sections/contact';
-import { projects } from '@/lib/data';
 import { Blog } from '@/components/sections/blog';
-import { blogPosts } from '@/lib/data';
 import { Research } from '@/components/sections/research';
 import { Certifications } from '@/components/sections/certifications';
 import { QA } from '@/components/sections/qa';
 import { imageUrls } from '@/lib/images';
+import { Project, BlogPost } from '@/lib/data';
 
-export default function Home() {
+async function getProjects(): Promise<Project[]> {
+  const res = await fetch(`${process.env.API_BASE_URL}/api/projects`, { cache: 'no-store' });
+  if (!res.ok) {
+    console.error('Failed to fetch projects');
+    return [];
+  }
+  return res.json();
+}
+
+async function getBlogPosts(): Promise<BlogPost[]> {
+    const res = await fetch(`${process.env.API_BASE_URL}/api/blog`, { cache: 'no-store' });
+    if (!res.ok) {
+        console.error('Failed to fetch blog posts');
+        return [];
+    }
+    return res.json();
+}
+
+
+export default async function Home() {
+  const projects = await getProjects();
+  const blogPosts = await getBlogPosts();
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />

@@ -29,34 +29,34 @@ export default function ManageColumnsPage() {
   const [items, setItems] = React.useState<Column[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  const fetchItems = React.useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/columns');
+      if (!response.ok) throw new Error('Failed to fetch columns');
+      const data = await response.json();
+      setItems(data);
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Could not fetch columns.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
   React.useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
       router.replace('/login');
       return;
     }
-
-    async function fetchItems() {
-      try {
-        const response = await fetch('/api/columns');
-        if (!response.ok) throw new Error('Failed to fetch columns');
-        const data = await response.json();
-        setItems(data);
-      } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Could not fetch columns.',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     fetchItems();
-  }, [router, toast]);
+  }, [router, fetchItems]);
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       const response = await fetch(`/api/columns/${id}`, {
         method: 'DELETE',
@@ -66,7 +66,7 @@ export default function ManageColumnsPage() {
         throw new Error('Failed to delete column');
       }
 
-      setItems(items.filter((p) => p.id !== id));
+      setItems(prev => prev.filter((p) => p._id !== id));
       toast({
         title: 'Column Deleted',
         description: 'The column has been removed successfully.',
@@ -107,23 +107,23 @@ export default function ManageColumnsPage() {
             </CardHeader>
             <CardContent>
               {items.length === 0 ? (
-                <p>No columns found.</p>
+                <p>No columns found. Add one to get started.</p>
               ) : (
                 <div className="space-y-4">
                   {items.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div key={item._id} className="flex items-center justify-between p-4 border rounded-lg">
                       <div>
                           <h3 className="font-semibold">{item.title}</h3>
                           <p className="text-sm text-muted-foreground">{item.outlet} - {item.date}</p>
                       </div>
                       <div className="flex items-center gap-2">
                          <Button variant="outline" size="sm" asChild>
-                           <a href={item.link} target="_blank">
+                           <a href={item.link} target="_blank" rel="noopener noreferrer">
                             <ExternalLink className="mr-2" /> View
                            </a>
                          </Button>
                          <Button variant="outline" size="icon" asChild>
-                           <Link href={`/admin/columns/edit/${item.id}`}>
+                           <Link href={`/admin/columns/edit/${item._id}`}>
                             <Pencil className="h-4 w-4" />
                            </Link>
                          </Button>
@@ -142,7 +142,7 @@ export default function ManageColumnsPage() {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDelete(item.id)}>
+                              <AlertDialogAction onClick={() => handleDelete(item._id)}>
                                 Continue
                               </AlertDialogAction>
                             </AlertDialogFooter>

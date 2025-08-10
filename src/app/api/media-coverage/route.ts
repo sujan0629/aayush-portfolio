@@ -1,19 +1,29 @@
+import dbConnect from '@/lib/db';
+import MediaCoverage from '@/models/MediaCoverage';
 import { NextResponse } from 'next/server';
-import { mediaCoverages } from '@/lib/data';
 
-export async function GET(request: Request) {
-  return NextResponse.json(mediaCoverages);
+export async function GET() {
+  await dbConnect();
+  try {
+    const items = await MediaCoverage.find({}).sort({ date: -1 });
+    return NextResponse.json(items);
+  } catch (error) {
+    return NextResponse.json({ message: 'Error fetching media coverage', error }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
-  const newItem = await request.json();
-  
-  if (!newItem.title || !newItem.outlet) {
-      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
+  await dbConnect();
+  try {
+    const body = await request.json();
+    const newItem = new MediaCoverage(body);
+    await newItem.save();
+    return NextResponse.json(newItem, { status: 201 });
+  } catch (error) {
+    console.error('Error creating media coverage:', error);
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json({ message: 'Validation Error', errors: (error as any).errors }, { status: 400 });
+    }
+    return NextResponse.json({ message: 'Error creating media coverage', error }, { status: 500 });
   }
-  
-  newItem.id = mediaCoverages.length + 1;
-  console.log('Received new media coverage:', newItem);
-  
-  return NextResponse.json(newItem, { status: 201 });
 }

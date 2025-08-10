@@ -1,19 +1,29 @@
+import dbConnect from '@/lib/db';
+import OtherPublication from '@/models/OtherPublication';
 import { NextResponse } from 'next/server';
-import { otherPublications } from '@/lib/data';
 
-export async function GET(request: Request) {
-  return NextResponse.json(otherPublications);
+export async function GET() {
+  await dbConnect();
+  try {
+    const items = await OtherPublication.find({}).sort({ date: -1 });
+    return NextResponse.json(items);
+  } catch (error) {
+    return NextResponse.json({ message: 'Error fetching other publications', error }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
-  const newPub = await request.json();
-  
-  if (!newPub.title || !newPub.publication) {
-      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
+  await dbConnect();
+  try {
+    const body = await request.json();
+    const newItem = new OtherPublication(body);
+    await newItem.save();
+    return NextResponse.json(newItem, { status: 201 });
+  } catch (error) {
+    console.error('Error creating other publication:', error);
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json({ message: 'Validation Error', errors: (error as any).errors }, { status: 400 });
+    }
+    return NextResponse.json({ message: 'Error creating other publication', error }, { status: 500 });
   }
-  
-  newPub.id = otherPublications.length + 1;
-  console.log('Received new publication:', newPub);
-  
-  return NextResponse.json(newPub, { status: 201 });
 }
