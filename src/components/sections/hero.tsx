@@ -20,7 +20,7 @@ export function Hero() {
       </div>
       <div className="container mx-auto px-4 z-10 relative">
         <div className="grid md:grid-cols-2 items-center gap-8 md:gap-12 min-h-[80vh] py-12 md:py-16">
-          <div className="relative flex justify-center items-center order-first md:order-last">
+          <div className="relative flex justify-center items-center order-first md:order-first">
             <div className="relative w-60 h-60 md:w-96 md:h-96 rounded-full overflow-hidden shadow-2xl border-4 border-primary/20">
               <Image
                 src={imageUrls.heroPortrait}
@@ -32,7 +32,7 @@ export function Hero() {
               />
             </div>
           </div>
-          <div className="text-center md:text-left order-last md:order-first">
+          <div className="text-center md:text-left order-last md:order-last">
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight">
               Aayush Bhatta
             </h1>
