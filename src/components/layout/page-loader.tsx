@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useInsertionEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -10,15 +10,41 @@ export function PageLoader() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    // Show loader on path change
-    setLoading(true);
-    
-    // Hide loader after a short delay to allow the page to render
-    const timer = setTimeout(() => setLoading(false), 500); 
-
-    return () => clearTimeout(timer);
+  useInsertionEffect(() => {
+    // This hook is used to hide the loader once the new page is rendered.
+    // useInsertionEffect runs before the DOM is updated, making it suitable
+    // for hiding the loader just before the new content appears.
+    setLoading(false);
   }, [pathname, searchParams]);
+
+  useEffect(() => {
+    // This effect sets up a global click listener to detect navigation starts.
+    const handleLinkClick = (e: MouseEvent) => {
+      let target = e.target as HTMLElement;
+      // Traverse up the DOM tree to find the anchor tag
+      while (target && target.tagName !== 'A') {
+        target = target.parentElement as HTMLElement;
+      }
+
+      if (
+        target &&
+        target.tagName === 'A' &&
+        target.hasAttribute('href')
+      ) {
+        const href = target.getAttribute('href');
+        // Check if it's an internal link, not a link to an external site or a hash link
+        if (href && href.startsWith('/') && !href.startsWith('/#')) {
+          setLoading(true);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleLinkClick);
+
+    return () => {
+      document.removeEventListener('click', handleLinkClick);
+    };
+  }, []);
 
 
   return (
